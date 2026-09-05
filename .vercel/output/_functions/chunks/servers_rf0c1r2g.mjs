@@ -1,5 +1,5 @@
 import { t as __exportAll } from "./rolldown-runtime_D7D4PA-g.mjs";
-import { t as GET$1 } from "./status_iY0tyYai.mjs";
+import { t as GET$1 } from "./status_K3PIG7AY.mjs";
 //#region src/pages/servers.ts
 var servers_exports = /* @__PURE__ */ __exportAll({ GET: () => GET });
 var GET = async (context) => {

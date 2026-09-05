@@ -7,17 +7,17 @@ import projectZomboid from '../assets/project-zomvoid.png';
 const serverDetails = [
 	{
 		name: 'Minecraft Vanilla',
-		version: '1.26.2',
+		version: 'Checking...',
 		image: minecraftVanilla,
 	},
 	{
 		name: 'Minecraft Modded',
-		version: '1.21.1',
+		version: 'Checking...',
 		image: minecraftModded,
 	},
 	{
 		name: 'Project Zomboid',
-		version: 'B 42',
+		version: 'Checking...',
 		image: projectZomboid,
 	},
 ];
@@ -36,7 +36,7 @@ const serverDetails = [
 					<img src={server.image.src} alt={`${server.name} server`} />
 					<div class="detail-row">
 						<span>Version:</span>
-						<strong>{server.version}</strong>
+						<strong class="server-version">{server.version}</strong>
 					</div>
 					<div class="detail-row">
 						<span>Status:</span>
@@ -62,25 +62,27 @@ const serverDetails = [
 </Layout>
 
 <script>
-	type ServerStatus = { name: string; online: boolean; statusCode: number; output: string };
+	type ServerStatus = { name: string; online: boolean; statusCode: number; output: string; version?: string | null };
 
 	const fallbackStatuses: ServerStatus[] = [
-		{ name: 'Minecraft Vanilla', online: false, statusCode: 0, output: '' },
-		{ name: 'Minecraft Modded', online: false, statusCode: 0, output: '' },
-		{ name: 'Project Zomboid', online: false, statusCode: 0, output: '' },
+		{ name: 'Minecraft Vanilla', online: false, statusCode: 0, output: '', version: 'Unknown' },
+		{ name: 'Minecraft Modded', online: false, statusCode: 0, output: '', version: 'Unknown' },
+		{ name: 'Project Zomboid', online: false, statusCode: 0, output: '', version: 'Unknown' },
 	];
 
 	function renderStatus(servers: ServerStatus[]) {
 		for (const server of servers) {
 			const card = document.querySelector<HTMLElement>(`[data-server-name="${server.name}"]`);
 			const status = card?.querySelector<HTMLElement>('.server-status');
+			const version = card?.querySelector<HTMLElement>('.server-version');
 							const code = card?.querySelector<HTMLElement>('.server-code');
 							const output = card?.querySelector<HTMLElement>('.server-output');
-							if (!card || !status || !code || !output) continue;
+							if (!card || !status || !version || !code || !output) continue;
 
 			card.classList.toggle('online', server.online);
 			card.classList.toggle('offline', !server.online);
 			status.textContent = server.online ? 'Online' : 'Offline';
+			version.textContent = server.version || 'Unknown';
 							code.textContent = String(server.statusCode);
 							output.textContent = server.output;
 		}

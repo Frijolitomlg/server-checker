@@ -72,21 +72,21 @@ var $$Index = createComponent(($$result, $$props, $$slots) => {
 	const serverDetails = [
 		{
 			name: "Minecraft Vanilla",
-			version: "1.26.2",
+			version: "Checking...",
 			image: minecraft_vanilla_default
 		},
 		{
 			name: "Minecraft Modded",
-			version: "1.21.1",
+			version: "Checking...",
 			image: minecraft_modded_default
 		},
 		{
 			name: "Project Zomboid",
-			version: "B 42",
+			version: "Checking...",
 			image: project_zomvoid_default
 		}
 	];
-	return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "data-astro-cid-lcdefpme": true }, { "default": ($$result) => renderTemplate`${maybeRenderHead($$result)}<main class="page-shell" data-astro-cid-lcdefpme><header class="page-title" data-astro-cid-lcdefpme><h1 data-astro-cid-lcdefpme>Legit Gaming Servers Status</h1></header><section class="server-grid" aria-label="Gaming server status" data-astro-cid-lcdefpme>${serverDetails.map((server) => renderTemplate`<article class="server-card"${addAttribute(server.name, "data-server-name")} data-astro-cid-lcdefpme><h2 data-astro-cid-lcdefpme>${server.name}</h2><img${addAttribute(server.image.src, "src")}${addAttribute(`${server.name} server`, "alt")} data-astro-cid-lcdefpme><div class="detail-row" data-astro-cid-lcdefpme><span data-astro-cid-lcdefpme>Version:</span><strong data-astro-cid-lcdefpme>${server.version}</strong></div><div class="detail-row" data-astro-cid-lcdefpme><span data-astro-cid-lcdefpme>Status:</span><strong class="server-status" data-astro-cid-lcdefpme>Checking...</strong></div><div class="detail-row diagnostic-row" data-astro-cid-lcdefpme><span data-astro-cid-lcdefpme>Code:</span><strong class="server-code" data-astro-cid-lcdefpme>-</strong></div></article>`)}</section><section class="service-links" aria-label="Web server links" data-astro-cid-lcdefpme><div class="service-row" data-service-url="http://berds-komga-comics.playit.plus:13163/" data-astro-cid-lcdefpme><span class="service-indicator" aria-label="Checking status" data-astro-cid-lcdefpme></span><a href="http://berds-komga-comics.playit.plus:13163/" target="_blank" rel="noreferrer" data-astro-cid-lcdefpme>Berds Komga Comics</a></div></section></main>` })}${renderScript($$result, "D:/Development/server-checker/src/pages/index.astro?astro&type=script&index=0&lang.ts")}`;
+	return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "data-astro-cid-lcdefpme": true }, { "default": ($$result) => renderTemplate`${maybeRenderHead($$result)}<main class="page-shell" data-astro-cid-lcdefpme><header class="page-title" data-astro-cid-lcdefpme><h1 data-astro-cid-lcdefpme>Legit Gaming Servers Status</h1></header><section class="server-grid" aria-label="Gaming server status" data-astro-cid-lcdefpme>${serverDetails.map((server) => renderTemplate`<article class="server-card"${addAttribute(server.name, "data-server-name")} data-astro-cid-lcdefpme><h2 data-astro-cid-lcdefpme>${server.name}</h2><img${addAttribute(server.image.src, "src")}${addAttribute(`${server.name} server`, "alt")} data-astro-cid-lcdefpme><div class="detail-row" data-astro-cid-lcdefpme><span data-astro-cid-lcdefpme>Version:</span><strong class="server-version" data-astro-cid-lcdefpme>${server.version}</strong></div><div class="detail-row" data-astro-cid-lcdefpme><span data-astro-cid-lcdefpme>Status:</span><strong class="server-status" data-astro-cid-lcdefpme>Checking...</strong></div><div class="detail-row diagnostic-row" data-astro-cid-lcdefpme><span data-astro-cid-lcdefpme>Code:</span><strong class="server-code" data-astro-cid-lcdefpme>-</strong></div></article>`)}</section><section class="service-links" aria-label="Web server links" data-astro-cid-lcdefpme><div class="service-row" data-service-url="http://berds-komga-comics.playit.plus:13163/" data-astro-cid-lcdefpme><span class="service-indicator" aria-label="Checking status" data-astro-cid-lcdefpme></span><a href="http://berds-komga-comics.playit.plus:13163/" target="_blank" rel="noreferrer" data-astro-cid-lcdefpme>Berds Komga Comics</a></div></section></main>` })}${renderScript($$result, "D:/Development/server-checker/src/pages/index.astro?astro&type=script&index=0&lang.ts")}`;
 }, "D:/Development/server-checker/src/pages/index.astro", void 0);
 var $$file = "D:/Development/server-checker/src/pages/index.astro";
 //#endregion

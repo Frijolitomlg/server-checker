@@ -7,13 +7,13 @@ var status_exports = /* @__PURE__ */ __exportAll({ GET: () => GET });
 var timeoutMs = 3500;
 var minecraftServers = [{
 	name: "Minecraft Vanilla",
-	version: "1.26.2",
+	version: "Unknown",
 	host: "retarded-minecraft.playit.plus",
 	port: 25565,
 	protocol: "Minecraft TCP"
 }, {
 	name: "Minecraft Modded",
-	version: "1.21.1",
+	version: "Unknown",
 	host: "retarded-modded-minecraft.playit.plus",
 	port: 25565,
 	protocol: "Minecraft TCP"
@@ -25,12 +25,39 @@ var zomboidServer = {
 	port: 17809,
 	protocol: "Project Zomboid UDP query"
 };
-function probe(host, port) {
+function writeVarInt(value) {
+	const bytes = [];
+	while (true) {
+		if ((value & -128) === 0) {
+			bytes.push(value);
+			return Buffer.from(bytes);
+		}
+		bytes.push(value & 127 | 128);
+		value >>>= 7;
+	}
+}
+function readVarInt(buffer, offset = 0) {
+	let value = 0;
+	let shift = 0;
+	let index = offset;
+	while (index < buffer.length && shift < 35) {
+		const byte = buffer[index++];
+		value |= (byte & 127) << shift;
+		if ((byte & 128) === 0) return {
+			value,
+			offset: index
+		};
+		shift += 7;
+	}
+	return null;
+}
+function minecraftStatus(host, port) {
 	return new Promise((resolve) => {
 		const socket = net.createConnection({
 			host,
 			port
 		});
+		let data = Buffer.alloc(0);
 		let finished = false;
 		const finish = (result) => {
 			if (finished) return;
@@ -39,11 +66,47 @@ function probe(host, port) {
 			resolve(result);
 		};
 		socket.setTimeout(timeoutMs);
-		socket.once("connect", () => finish({
-			online: true,
-			statusCode: 200,
-			output: `TCP connection accepted on port ${port}`
-		}));
+		socket.once("connect", () => {
+			const address = Buffer.from(host, "utf8");
+			const handshake = Buffer.concat([
+				Buffer.from([0]),
+				writeVarInt(256),
+				writeVarInt(address.length),
+				address,
+				Buffer.from([port >> 8 & 255, port & 255]),
+				Buffer.from([1])
+			]);
+			const handshakePacket = Buffer.concat([writeVarInt(handshake.length), handshake]);
+			const request = Buffer.from([1, 0]);
+			socket.write(Buffer.concat([handshakePacket, request]));
+		});
+		socket.on("data", (chunk) => {
+			data = Buffer.concat([data, chunk]);
+			const packetLength = readVarInt(data);
+			if (!packetLength || data.length < packetLength.value + packetLength.offset) return;
+			const packet = data.subarray(packetLength.offset, packetLength.offset + packetLength.value);
+			const stringLength = readVarInt(packet, 1);
+			if (!stringLength) return finish({
+				online: false,
+				statusCode: 502,
+				output: "Invalid Minecraft status response"
+			});
+			try {
+				const result = JSON.parse(packet.subarray(stringLength.offset, stringLength.offset + stringLength.value).toString("utf8"));
+				finish({
+					online: true,
+					statusCode: 200,
+					output: "Minecraft status query succeeded",
+					version: result.version?.name || null
+				});
+			} catch {
+				finish({
+					online: false,
+					statusCode: 502,
+					output: "Invalid Minecraft status JSON"
+				});
+			}
+		});
 		socket.once("timeout", () => finish({
 			online: false,
 			statusCode: 408,
@@ -52,7 +115,7 @@ function probe(host, port) {
 		socket.once("error", (error) => finish({
 			online: false,
 			statusCode: 502,
-			output: error.code ? `TCP connection failed: ${error.code}` : "TCP connection failed"
+			output: error.code ? `Minecraft query failed: ${error.code}` : "Minecraft query failed"
 		}));
 	});
 }
@@ -60,11 +123,11 @@ async function checkMinecraft(host) {
 	try {
 		const records = await dns.resolveSrv(`_minecraft._tcp.${host}`);
 		if (records.length > 0) {
-			const results = await Promise.all(records.map((record) => probe(record.name, record.port)));
+			const results = await Promise.all(records.map((record) => minecraftStatus(record.name, record.port)));
 			return results.find((result) => result.online) ?? results[0];
 		}
 	} catch {}
-	return probe(host, 25565);
+	return minecraftStatus(host, 25565);
 }
 async function checkProjectZomboid() {
 	try {
