@@ -1,0 +1,14 @@
+{
+  "name": "pz-status-relay",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "gamedig": "^5.3.1"
+  }
+}

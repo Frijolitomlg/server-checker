@@ -1,0 +1,250 @@
+{"message":"Enabling sessions with filesystem storage","label":"@astrojs/node","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Generated 1ms","label":"types","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Re-optimizing dependencies because vite config has changed","label":"vite","level":"info"}
+{"message":" astro  v7.3.1 ready in 5082 ms\n┃ Local    http://127.0.0.1:4321/","label":"SKIP_FORMAT","level":"info"}
+{"message":"watching for file changes...","label":null,"level":"info"}
+{"message":"[200] /api/status 3538ms","label":null,"level":"info"}
+{"message":"[200] / 34ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3517ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3514ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3512ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3502ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3504ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3503ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3509ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3514ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3514ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3523ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3522ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3510ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3512ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3518ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3528ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3512ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3527ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3525ms","label":null,"level":"info"}
+{"message":"[200] / 1953ms","label":null,"level":"info"}
+{"message":"[200] /api/status 4117ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3514ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3512ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3516ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3503ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3506ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3506ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[404] / 99ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[200] / 16ms","label":null,"level":"info"}
+{"message":"[200] / 9ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3518ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3501ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3510ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3507ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3505ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3512ms","label":null,"level":"info"}
+{"message":"/src/pages/index.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] /api/status 3503ms","label":null,"level":"info"}
+{"message":"[200] / 8ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] / 3ms","label":null,"level":"info"}
+{"message":"[200] / 4ms","label":null,"level":"info"}
+{"message":"[200] / 3ms","label":null,"level":"info"}
+{"message":"[200] / 3ms","label":null,"level":"info"}
+{"message":"[200] / 3ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3505ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3512ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3503ms","label":null,"level":"info"}
+{"message":"[200] / 4ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3505ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3502ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3504ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3504ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3505ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3502ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3501ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3504ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3504ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3509ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3504ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3516ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3505ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] / 6ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3509ms","label":null,"level":"info"}
+{"message":"Configuration file updated. Restarting...","label":null,"level":"info"}
+{"message":"Enabling sessions with filesystem storage","label":"@astrojs/node","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Re-optimizing dependencies because vite config has changed","label":"vite","level":"info"}
+{"message":"server restarted.","label":"vite","level":"info"}
+{"message":"[200] /api/status 3539ms","label":null,"level":"info"}
+{"message":"[200] /servers 3518ms","label":null,"level":"info"}
+{"message":"[200] / 43ms","label":null,"level":"info"}
+{"message":"[200] / 5ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3507ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3517ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3507ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3512ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3516ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3518ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3512ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3504ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3506ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3504ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3503ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3506ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3506ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3513ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3515ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3505ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3509ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3509ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3505ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3501ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3508ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3502ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3511ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[200] / 23ms","label":null,"level":"info"}
+{"message":"[200] / 24ms","label":null,"level":"info"}
+{"message":"[200] /api/status 249ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[200] / 54ms","label":null,"level":"info"}
+{"message":"[200] / 55ms","label":null,"level":"info"}
+{"message":"[200] /api/status 193ms","label":null,"level":"info"}
+{"message":"[200] /api/status 3518ms","label":null,"level":"info"}
+{"message":"[200] /api/status 731ms","label":null,"level":"info"}
+{"message":"[200] /api/status 191ms","label":null,"level":"info"}
+{"message":"[200] /servers 377ms","label":null,"level":"info"}
+{"message":"[200] /api/status 381ms","label":null,"level":"info"}
+{"message":"[200] /api/status 333ms","label":null,"level":"info"}
+{"message":"[200] /api/status 186ms","label":null,"level":"info"}
+{"message":"[200] /api/status 332ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[200] / 10ms","label":null,"level":"info"}
+{"message":"[200] /api/status 196ms","label":null,"level":"info"}
+{"message":"[200] /api/status 189ms","label":null,"level":"info"}
+{"message":"/src/pages/index.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[200] / 13ms","label":null,"level":"info"}
+{"message":"[200] /api/status 371ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[200] / 14ms","label":null,"level":"info"}
+{"message":"[200] /api/status 187ms","label":null,"level":"info"}
+{"message":"[200] /servers 189ms","label":null,"level":"info"}
+{"message":"[200] /api/status 187ms","label":null,"level":"info"}
+{"message":"[200] /api/status 187ms","label":null,"level":"info"}
+{"message":"[200] /api/status 384ms","label":null,"level":"info"}
+{"message":"[200] /api/status 187ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[200] / 12ms","label":null,"level":"info"}
+{"message":"[200] /servers 194ms","label":null,"level":"info"}
+{"message":"[200] /servers 191ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"[200] / 13ms","label":null,"level":"info"}
+{"message":"[200] /servers 333ms","label":null,"level":"info"}
+{"message":"[200] /servers 187ms","label":null,"level":"info"}
+{"message":"[200] /servers 372ms","label":null,"level":"info"}
+{"message":"[200] /servers 188ms","label":null,"level":"info"}
+{"message":"[200] /servers 395ms","label":null,"level":"info"}
+{"message":"[200] /servers 396ms","label":null,"level":"info"}
+{"message":"[200] /servers 378ms","label":null,"level":"info"}
+{"message":"[200] /servers 379ms","label":null,"level":"info"}
+{"message":"[200] /servers 382ms","label":null,"level":"info"}
+{"message":"[200] /servers 379ms","label":null,"level":"info"}
+{"message":"[200] /servers 381ms","label":null,"level":"info"}
+{"message":"[200] /servers 381ms","label":null,"level":"info"}
+{"message":"[200] /servers 380ms","label":null,"level":"info"}
+{"message":"[200] /servers 187ms","label":null,"level":"info"}
+{"message":"[200] /servers 380ms","label":null,"level":"info"}
+{"message":"[200] /servers 376ms","label":null,"level":"info"}
+{"message":"[200] /servers 378ms","label":null,"level":"info"}
+{"message":"[200] /servers 378ms","label":null,"level":"info"}
+{"message":"[200] /servers 378ms","label":null,"level":"info"}
+{"message":"[200] /servers 380ms","label":null,"level":"info"}
+{"message":"[200] /servers 377ms","label":null,"level":"info"}
+{"message":"[200] /servers 379ms","label":null,"level":"info"}
+{"message":"[200] /servers 380ms","label":null,"level":"info"}
+{"message":"[200] /servers 384ms","label":null,"level":"info"}
+{"message":"[200] /servers 379ms","label":null,"level":"info"}
+{"message":"[200] /servers 379ms","label":null,"level":"info"}
+{"message":"[200] /servers 377ms","label":null,"level":"info"}
+{"message":"[200] /servers 379ms","label":null,"level":"info"}
+{"message":"[200] /servers 377ms","label":null,"level":"info"}
+{"message":"[200] /servers 377ms","label":null,"level":"info"}
+{"message":"[200] /servers 382ms","label":null,"level":"info"}
+{"message":"[200] /servers 549ms","label":null,"level":"info"}
+{"message":"[200] /servers 375ms","label":null,"level":"info"}
+{"message":"[200] /servers 379ms","label":null,"level":"info"}
+{"message":"[200] /servers 377ms","label":null,"level":"info"}
+{"message":"[200] /servers 378ms","label":null,"level":"info"}
+{"message":"[200] /servers 378ms","label":null,"level":"info"}
+{"message":"[200] /servers 380ms","label":null,"level":"info"}
+{"message":"[200] /servers 384ms","label":null,"level":"info"}
+{"message":"[200] /servers 382ms","label":null,"level":"info"}
+{"message":"[200] /servers 3540ms","label":null,"level":"info"}
+{"message":"[200] /servers 391ms","label":null,"level":"info"}
+{"message":"[200] /servers 378ms","label":null,"level":"info"}
+{"message":"src/pages/index.astro","label":"watch","level":"info"}
+{"message":"Configuration file updated. Restarting...","label":null,"level":"info"}
+[1m[31m[astro][39m[22m Unable to load your Astro config
+
+{"message":"Cannot find module '@astrojs/node' imported from 'D:/Development/legit-servers-status-check/astro.config.mjs'\n  Stack trace:\n    at D:\\Development\\legit-servers-status-check\\node_modules\\vite\\dist\\node\\chunks\\node.js:34330:32\n    [...] See full stack trace in the browser, or rerun with --verbose.\n","label":"config","level":"error"}
+{"message":"Continuing with previous valid configuration\n","label":null,"level":"error"}
+{"message":"Configuration file updated. Restarting...","label":null,"level":"info"}
+[1m[31m[astro][39m[22m Unable to load your Astro config
+
+{"message":"Cannot find module '@astrojs/node' imported from 'D:/Development/legit-servers-status-check/astro.config.mjs'\n  Stack trace:\n    at fetchModule (file:///D:/Development/legit-servers-status-check/node_modules/vite/dist/node/chunks/node.js:34330:32)\n    [...] See full stack trace in the browser, or rerun with --verbose.\n","label":"config","level":"error"}
+{"message":"Continuing with previous valid configuration\n","label":null,"level":"error"}
+{"message":"Configuration file updated. Restarting...","label":null,"level":"info"}
+[1m[31m[astro][39m[22m Unable to load your Astro config
+
+{"message":"Cannot find module '@astrojs/node' imported from 'D:/Development/legit-servers-status-check/astro.config.mjs'\n  Stack trace:\n    at fetchModule (file:///D:/Development/legit-servers-status-check/node_modules/vite/dist/node/chunks/node.js:34330:32)\n    [...] See full stack trace in the browser, or rerun with --verbose.\n","label":"config","level":"error"}
+{"message":"Continuing with previous valid configuration\n","label":null,"level":"error"}
+{"message":"Configuration file updated. Restarting...","label":null,"level":"info"}
+{"message":"Enabling sessions with filesystem storage","label":"@astrojs/node","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Re-optimizing dependencies because lockfile has changed","label":"vite","level":"info"}
+{"message":"server restarted.","label":"vite","level":"info"}
+{"message":"[UnhandledRejection] Astro detected an unhandled rejection. Here's the stack trace:\nError: EBUSY: resource busy or locked, watch 'D:\\Development\\legit-servers-status-check\\astro.config.zip'\n    at FSWatcher.<computed> (node:internal/fs/watchers:321:19)\n    at Object.watch (node:fs:2548:36)\n    at createFsWatchInstance (file:///D:/Development/legit-servers-status-check/node_modules/vite/dist/node/chunks/node.js:9429:16)\n    at setFsWatchListener (file:///D:/Development/legit-servers-status-check/node_modules/vite/dist/node/chunks/node.js:9471:14)\n    at NodeFsHandler._watchWithNodeFs (file:///D:/Development/legit-servers-status-check/node_modules/vite/dist/node/chunks/node.js:9586:20)\n    at NodeFsHandler._handleFile (file:///D:/Development/legit-servers-status-check/node_modules/vite/dist/node/chunks/node.js:9630:24)\n    at NodeFsHandler._addToNodeFs (file:///D:/Development/legit-servers-status-check/node_modules/vite/dist/node/chunks/node.js:9804:26)\n  Hint:\n    Make sure your promises all have an `await` or a `.catch()` handler.\n  Error reference:\n    https://docs.astro.build/en/reference/errors/unhandled-rejection/\n  Stack trace:\n    at FSWatcher.<computed> (node:internal/fs/watchers:321:19)\n    [...] See full stack trace in the browser, or rerun with --verbose.","label":null,"level":"error"}
