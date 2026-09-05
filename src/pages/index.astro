@@ -49,6 +49,15 @@ const serverDetails = [
 				</article>
 			))}
 		</section>
+
+		<section class="service-links" aria-label="Web server links">
+			<div class="service-row" data-service-url="http://berds-komga-comics.playit.plus:13163/">
+				<span class="service-indicator" aria-label="Checking status"></span>
+				<a href="http://berds-komga-comics.playit.plus:13163/" target="_blank" rel="noreferrer">
+					Berds Komga Comics
+				</a>
+			</div>
+		</section>
 	</main>
 </Layout>
 
@@ -56,9 +65,9 @@ const serverDetails = [
 	type ServerStatus = { name: string; online: boolean; statusCode: number; output: string };
 
 	const fallbackStatuses: ServerStatus[] = [
-		{ name: 'Minecraft Vanilla', online: false },
-		{ name: 'Minecraft Modded', online: false },
-		{ name: 'Project Zomboid', online: false },
+		{ name: 'Minecraft Vanilla', online: false, statusCode: 0, output: '' },
+		{ name: 'Minecraft Modded', online: false, statusCode: 0, output: '' },
+		{ name: 'Project Zomboid', online: false, statusCode: 0, output: '' },
 	];
 
 	function renderStatus(servers: ServerStatus[]) {
@@ -87,8 +96,27 @@ const serverDetails = [
 		}
 	}
 
+	async function checkWebServices() {
+		const row = document.querySelector<HTMLElement>('[data-service-url]');
+		const indicator = row?.querySelector<HTMLElement>('.service-indicator');
+		if (!indicator) return;
+
+		try {
+			const response = await fetch('/api/web-status');
+			const result = await response.json();
+			indicator.classList.toggle('online', result.online);
+			indicator.classList.toggle('offline', !result.online);
+			indicator.setAttribute('aria-label', result.online ? 'Online' : 'Offline');
+		} catch {
+			indicator.classList.add('offline');
+			indicator.setAttribute('aria-label', 'Offline');
+		}
+	}
+
 	checkServers();
+	checkWebServices();
 	setInterval(checkServers, 30_000);
+	setInterval(checkWebServices, 30_000);
 </script>
 
 <style>
@@ -132,6 +160,37 @@ const serverDetails = [
 		justify-content: center;
 		gap: 80px;
 		width: min(100%, 976px);
+	}
+
+	.service-links {
+		width: min(100%, 976px);
+	}
+
+	.service-row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 12px;
+		font-size: 1.25rem;
+	}
+
+	.service-row a {
+		color: #fff;
+	}
+
+	.service-indicator {
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		background: #737373;
+	}
+
+	.service-indicator.online {
+		background: #a3e635;
+	}
+
+	.service-indicator.offline {
+		background: #b91c1c;
 	}
 
 	.server-card {
