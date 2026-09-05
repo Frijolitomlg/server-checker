@@ -1,9 +1,9 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import type { APIRoute } from 'astro';
+import { GameDig } from 'gamedig';
 
 const timeoutMs = 3500;
-const pzRelayUrl = import.meta.env.PZ_RELAY_URL || 'http://127.0.0.1:3001/status';
 
 const minecraftServers = [
 	{ name: 'Minecraft Vanilla', version: '1.26.2', host: 'retarded-minecraft.playit.plus', port: 25565, protocol: 'Minecraft TCP' },
@@ -59,23 +59,29 @@ async function checkMinecraft(host: string) {
 
 async function checkProjectZomboid(): Promise<ProbeResult> {
 	try {
-		const response = await fetch(pzRelayUrl, { signal: AbortSignal.timeout(timeoutMs) });
-		if (!response.ok) throw new Error(`Relay returned HTTP ${response.status}`);
-		const result = await response.json();
+		const server = await GameDig.query({
+			type: 'projectzomboid',
+			host: zomboidServer.host,
+			port: zomboidServer.port,
+			socketTimeout: timeoutMs,
+		});
+		const versionTag = server.raw?.tags?.find((tag) => /(?:^|;)VERSION:/i.test(tag));
+		const version = versionTag?.match(/(?:^|;)VERSION:([^;]+)/i)?.[1] || null;
+
 		return {
-			online: Boolean(result.online),
-			statusCode: response.status,
-			output: result.output || 'Relay returned no output',
-			version: result.version,
-			players: result.players,
-			maxPlayers: result.maxPlayers,
-			map: result.map,
+			online: true,
+			statusCode: 200,
+			output: `Gamedig query succeeded on query port ${zomboidServer.port}`,
+			version,
+			players: server.players?.length ?? 0,
+			maxPlayers: server.maxplayers ?? null,
+			map: server.map || null,
 		};
 	} catch (error) {
 		return {
 			online: false,
 			statusCode: 502,
-			output: `Project Zomboid relay unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`,
+			output: `Project Zomboid query failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
 			version: null,
 		};
 	}
