@@ -1,5 +1,5 @@
 import { $ as UnsupportedImageFormat, F as NoImageMetadata, N as MissingSharp, t as AstroError } from "./errors_BP0o2XvA.mjs";
-import { a as resolveDefaultOutputFormat, i as detector, n as baseService, r as parseQuality } from "./node_V2HU56XJ.mjs";
+import { a as resolveDefaultOutputFormat, i as detector, n as baseService, r as parseQuality } from "./node_DEL51ayP.mjs";
 //#region node_modules/astro/dist/assets/services/sharp.js
 var sharp;
 var qualityTable = {
