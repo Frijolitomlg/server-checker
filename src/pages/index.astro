@@ -46,7 +46,6 @@ const serverDetails = [
 						<span>Code:</span>
 						<strong class="server-code">-</strong>
 					</div>
-					<p class="server-output" aria-live="polite">Waiting for probe...</p>
 				</article>
 			))}
 		</section>
@@ -185,6 +184,10 @@ const serverDetails = [
 
 	.server-card.offline .server-status {
 		color: #b91c1c;
+	}
+
+	.server-output {
+		display: none;
 	}
 
 	footer {
