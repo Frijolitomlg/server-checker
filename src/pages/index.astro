@@ -76,15 +76,13 @@ const serverDetails = [
 			const status = card?.querySelector<HTMLElement>('.server-status');
 			const version = card?.querySelector<HTMLElement>('.server-version');
 							const code = card?.querySelector<HTMLElement>('.server-code');
-							const output = card?.querySelector<HTMLElement>('.server-output');
-							if (!card || !status || !version || !code || !output) continue;
+							if (!card || !status || !version || !code) continue;
 
 			card.classList.toggle('online', server.online);
 			card.classList.toggle('offline', !server.online);
 			status.textContent = server.online ? 'Online' : 'Offline';
 			version.textContent = server.version || 'Unknown';
 							code.textContent = String(server.statusCode);
-							output.textContent = server.output;
 		}
 	}
 
