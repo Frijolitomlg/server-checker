@@ -17,7 +17,6 @@ const servers = [
 	{
 		key: 'Minecraft Vanilla',
 		title: 'Minecraft Vanilla',
-		version: '1.26.2',
 		titleFont: "'Press Start 2P'",
 		background: minecraftVanillaBg,
 		icons: [
@@ -29,16 +28,17 @@ const servers = [
 	{
 		key: 'Minecraft Modded',
 		title: 'Minecraft Modded',
-		version: '1.21.1',
 		titleFont: "'Press Start 2P'",
 		background: minecraftModdedBg,
-		icons: [{ src: fabricIcon, href: '#', alt: 'Fabric Link' }],
+		icons: [
+			{ src: mcMapIcon, href: 'http://expressing-easter.tun.ply.gg:22630', alt: 'Minecraft Modded Map' },
+			{ src: fabricIcon, href: '#', alt: 'Fabric Link' },
+		],
 		compact: false,
 	},
 	{
 		key: 'Project Zomboid',
 		title: 'Project Zomboid',
-		version: 'B 42',
 		titleFont: "'Creepster'",
 		background: zomboidBg,
 		icons: [],
@@ -70,7 +70,7 @@ const servers = [
 							<dl class:list={['server-details', { 'server-details--compact': server.compact }]}>
 								<div class="server-details__row">
 									<dt class="server-details__label">Version:</dt>
-									<dd class="server-details__value">{server.version}</dd>
+									<dd class="server-details__value" data-version>Checking...</dd>
 								</div>
 								<div class="server-details__row">
 									<dt class="server-details__label">Status:</dt>
@@ -146,24 +146,33 @@ const servers = [
 </Layout>
 
 <script>
-	type ServerStatus = { name: string; online: boolean; statusCode: number; output: string };
+	type ServerStatus = {
+		name: string;
+		online: boolean;
+		statusCode: number;
+		output: string;
+		version: string | null;
+	};
 
 	const offlineFallback: Omit<ServerStatus, 'name'> = {
 		online: false,
 		statusCode: 503,
 		output: 'Status endpoint unreachable',
+		version: null,
 	};
 
 	function renderStatus(servers: ServerStatus[]) {
 		for (const server of servers) {
 			const card = document.querySelector<HTMLElement>(`[data-server-name="${server.name}"]`);
+			const version = card?.querySelector<HTMLElement>('[data-version]');
 			const status = card?.querySelector<HTMLElement>('[data-status]');
 			const code = card?.querySelector<HTMLElement>('[data-code]');
 			const output = card?.querySelector<HTMLElement>('[data-output]');
-			if (!card || !status || !code || !output) continue;
+			if (!card || !version || !status || !code || !output) continue;
 
 			card.classList.toggle('online', server.online);
 			card.classList.toggle('offline', !server.online);
+			version.textContent = server.version?.trim() || 'Unavailable';
 			status.textContent = server.online ? 'Online' : 'Offline';
 			code.textContent = String(server.statusCode);
 			output.textContent = server.output;
@@ -173,7 +182,18 @@ const servers = [
 	async function checkServers() {
 		try {
 			const response = await fetch('/api/status');
-			if (!response.ok) throw new Error(`Status request failed with HTTP ${response.status}`);
+			if (!response.ok) {
+				renderStatus(
+					Array.from(document.querySelectorAll<HTMLElement>('[data-server-name]')).map((card) => ({
+						name: card.dataset.serverName ?? '',
+						online: false,
+						statusCode: response.status,
+						output: `Status request failed with HTTP ${response.status}`,
+						version: null,
+					})),
+				);
+				return;
+			}
 			renderStatus(await response.json());
 		} catch (error) {
 			renderStatus(
@@ -193,7 +213,6 @@ const servers = [
 <style>
 	.page {
 		width: 100%;
-		max-width: 1440px;
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
