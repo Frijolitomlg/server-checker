@@ -1,299 +1,486 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import minecraftModded from '../assets/minecraft-modded.png';
-import minecraftVanilla from '../assets/minecraft-vanilla.png';
-import projectZomboid from '../assets/project-zomvoid.png';
+import minecraftVanillaBg from '../assets/Minecraft-Vanilla-BG.png';
+import minecraftModdedBg from '../assets/Minecraft-modded-BG.png';
+import zomboidBg from '../assets/Zomboid-BG.png';
+import komgaBg from '../assets/Komga-bg.png';
+import mcMapIcon from '../assets/mc-map-icon.png';
+import fabricIcon from '../assets/fabric-icon.png';
 
-const serverDetails = [
+const komgaUrl = import.meta.env.PUBLIC_KOMGA_URL;
+
+const servers = [
 	{
-		name: 'Minecraft Vanilla',
-		version: 'Checking...',
-		image: minecraftVanilla,
+		key: 'Minecraft Vanilla',
+		title: 'Minecraft Vanilla',
+		version: '1.26.2',
+		titleFont: "'Press Start 2P'",
+		background: minecraftVanillaBg,
+		icons: [
+			{ src: mcMapIcon, href: 'http://roosevelt-intact.tun.ply.gg:44435', alt: 'Minecraft Map' },
+			{ src: fabricIcon, href: '#', alt: 'Fabric Link' },
+		],
+		compact: false,
 	},
 	{
-		name: 'Minecraft Modded',
-		version: 'Checking...',
-		image: minecraftModded,
+		key: 'Minecraft Modded',
+		title: 'Minecraft Modded',
+		version: '1.21.1',
+		titleFont: "'Press Start 2P'",
+		background: minecraftModdedBg,
+		icons: [{ src: fabricIcon, href: '#', alt: 'Fabric Link' }],
+		compact: false,
 	},
 	{
-		name: 'Project Zomboid',
-		version: 'Checking...',
-		image: projectZomboid,
+		key: 'Project Zomboid',
+		title: 'Project Zomboid',
+		version: 'B 42',
+		titleFont: "'Creepster'",
+		background: zomboidBg,
+		icons: [],
+		compact: true,
 	},
 ];
 ---
 
 <Layout>
-	<main class="page-shell">
-		<header class="page-title">
-			<h1>Legit Gaming Servers Status</h1>
+	<main class="page">
+		<header class="page-header">
+			<div class="page-header__inner">
+				<h1 class="page-header__title">Legit Gaming</h1>
+				<p class="page-header__subtitle">Server Status Checker</p>
+			</div>
 		</header>
 
-		<section class="server-grid" aria-label="Gaming server status">
-			{serverDetails.map((server) => (
-				<article class="server-card" data-server-name={server.name}>
-					<h2>{server.name}</h2>
-					<img src={server.image.src} alt={`${server.name} server`} />
-					<div class="detail-row">
-						<span>Version:</span>
-						<strong class="server-version">{server.version}</strong>
-					</div>
-					<div class="detail-row">
-						<span>Status:</span>
-						<strong class="server-status">Checking...</strong>
-					</div>
-					<div class="detail-row diagnostic-row">
-						<span>Code:</span>
-						<strong class="server-code">-</strong>
-					</div>
-				</article>
-			))}
-		</section>
+		<section class="server-list" aria-label="Gaming server status">
+			{
+				servers.map((server) => (
+					<article
+						class="server-card"
+						data-server-name={server.key}
+						style={`--card-bg: url('${server.background.src}'); --title-font: ${server.titleFont};`}
+					>
+						<h2 class="server-card__title">{server.title}</h2>
 
-		<section class="service-links" aria-label="Web server links">
-			<div class="service-row" data-service-url="http://berds-komga-comics.playit.plus:13163/">
-				<span class="service-indicator" aria-label="Checking status"></span>
-				<a href="http://berds-komga-comics.playit.plus:13163/" target="_blank" rel="noreferrer">
-					Berds Komga Comics
-				</a>
-			</div>
+						<div class="server-card__body">
+							<dl class:list={['server-details', { 'server-details--compact': server.compact }]}>
+								<div class="server-details__row">
+									<dt class="server-details__label">Version:</dt>
+									<dd class="server-details__value">{server.version}</dd>
+								</div>
+								<div class="server-details__row">
+									<dt class="server-details__label">Status:</dt>
+									<dd class="server-details__value server-status" data-status>
+										Checking...
+									</dd>
+								</div>
+								<div class="server-details__row">
+									<dt class="server-details__label">Code</dt>
+									<dd class="server-details__value" data-code>-</dd>
+								</div>
+							</dl>
+
+							{server.icons.length > 0 && (
+								<div class="server-icons">
+									{server.icons.map((icon) => (
+										icon.href ? (
+											<a
+												class="server-icon-button"
+												href={icon.href}
+												target="_blank"
+												rel="noreferrer"
+												aria-label={icon.alt}
+											>
+												<img
+													class="server-icon"
+													src={icon.src.src}
+													alt={icon.alt}
+													width="64"
+													height="64"
+													loading="lazy"
+													decoding="async"
+												/>
+											</a>
+										) : (
+											<img
+												class="server-icon"
+												src={icon.src.src}
+												alt={icon.alt}
+												width="64"
+												height="64"
+												loading="lazy"
+												decoding="async"
+											/>
+										)
+									))}
+								</div>
+							)}
+						</div>
+
+						<p class="visually-hidden" data-output aria-live="polite">
+							Waiting for probe...
+						</p>
+					</article>
+				))
+			}
+
+			<article
+				class="server-card server-card--komga"
+				style={`--card-bg: url('${komgaBg.src}'); --title-font: 'Coustard';`}
+			>
+				<h2 class="server-card__title server-card__title--large">Komga Readings</h2>
+				<div class="komga-body">
+					<div class="komga-body__row">
+						<a class="komga-login" href="https://berds-komga-comics.playit.plus:13163/">
+							Log in
+						</a>
+					</div>
+				</div>
+			</article>
 		</section>
 	</main>
 </Layout>
 
 <script>
-	type ServerStatus = { name: string; online: boolean; statusCode: number; output: string; version?: string | null };
+	type ServerStatus = { name: string; online: boolean; statusCode: number; output: string };
 
-	const fallbackStatuses: ServerStatus[] = [
-		{ name: 'Minecraft Vanilla', online: false, statusCode: 0, output: '', version: 'Unknown' },
-		{ name: 'Minecraft Modded', online: false, statusCode: 0, output: '', version: 'Unknown' },
-		{ name: 'Project Zomboid', online: false, statusCode: 0, output: '', version: 'Unknown' },
-	];
+	const offlineFallback: Omit<ServerStatus, 'name'> = {
+		online: false,
+		statusCode: 503,
+		output: 'Status endpoint unreachable',
+	};
 
 	function renderStatus(servers: ServerStatus[]) {
 		for (const server of servers) {
 			const card = document.querySelector<HTMLElement>(`[data-server-name="${server.name}"]`);
-			const status = card?.querySelector<HTMLElement>('.server-status');
-			const version = card?.querySelector<HTMLElement>('.server-version');
-							const code = card?.querySelector<HTMLElement>('.server-code');
-							if (!card || !status || !version || !code) continue;
+			const status = card?.querySelector<HTMLElement>('[data-status]');
+			const code = card?.querySelector<HTMLElement>('[data-code]');
+			const output = card?.querySelector<HTMLElement>('[data-output]');
+			if (!card || !status || !code || !output) continue;
 
 			card.classList.toggle('online', server.online);
 			card.classList.toggle('offline', !server.online);
 			status.textContent = server.online ? 'Online' : 'Offline';
-			version.textContent = server.version || 'Unknown';
-							code.textContent = String(server.statusCode);
+			code.textContent = String(server.statusCode);
+			output.textContent = server.output;
 		}
 	}
 
 	async function checkServers() {
 		try {
 			const response = await fetch('/api/status');
-			if (!response.ok) throw new Error('Status request failed');
+			if (!response.ok) throw new Error(`Status request failed with HTTP ${response.status}`);
 			renderStatus(await response.json());
-		} catch {
-			renderStatus(fallbackStatuses);
-		}
-	}
-
-	async function checkWebServices() {
-		const row = document.querySelector<HTMLElement>('[data-service-url]');
-		const indicator = row?.querySelector<HTMLElement>('.service-indicator');
-		if (!indicator) return;
-
-		try {
-			const response = await fetch('/api/web-status');
-			const result = await response.json();
-			indicator.classList.toggle('online', result.online);
-			indicator.classList.toggle('offline', !result.online);
-			indicator.setAttribute('aria-label', result.online ? 'Online' : 'Offline');
-		} catch {
-			indicator.classList.add('offline');
-			indicator.setAttribute('aria-label', 'Offline');
+		} catch (error) {
+			renderStatus(
+				Array.from(document.querySelectorAll<HTMLElement>('[data-server-name]')).map((card) => ({
+					name: card.dataset.serverName ?? '',
+					...offlineFallback,
+					output: error instanceof Error ? error.message : offlineFallback.output,
+				})),
+			);
 		}
 	}
 
 	checkServers();
-	checkWebServices();
 	setInterval(checkServers, 30_000);
-	setInterval(checkWebServices, 30_000);
 </script>
 
 <style>
-	:global(*) {
-		box-sizing: border-box;
-	}
-
-	:global(body) {
-		background: #171717;
-		color: #fff;
-		font-family: Inter, 'Segoe UI', sans-serif;
-	}
-
-	.page-shell {
-		min-height: 100vh;
+	.page {
+		width: 100%;
+		max-width: 1440px;
+		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		gap: 128px;
-		overflow: hidden;
-		padding: 60px 48px 40px;
+		align-items: stretch;
 		background: #171717;
+		overflow: hidden;
 	}
 
-	.page-title {
-		padding: 10px;
-		text-align: center;
-	}
-
-	h1 {
-		margin: 0;
-		font-family: 'Cal Sans', Inter, sans-serif;
-		font-size: clamp(2.5rem, 5vw, 3.75rem);
-		font-weight: 400;
-		line-height: 1.1;
-	}
-
-	.server-grid {
+	.page-header {
+		padding: 40px 20px 112px;
 		display: flex;
-		align-items: flex-start;
 		justify-content: center;
-		gap: 80px;
-		width: min(100%, 976px);
-	}
-
-	.service-links {
-		width: min(100%, 976px);
-	}
-
-	.service-row {
-		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: 12px;
-		font-size: 1.25rem;
+		gap: 10px;
 	}
 
-	.service-row a {
+	.page-header__inner {
+		width: 100%;
+		max-width: 505px;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 20px;
+	}
+
+	.page-header__title {
+		margin: 0;
+		text-align: center;
+		color: #b91c1c;
+		font-family: 'Bungee', Inter, sans-serif;
+		font-size: 60px;
+		font-weight: 400;
+		line-height: 1.05;
+	}
+
+	.page-header__subtitle {
+		margin: 0;
+		align-self: stretch;
+		text-align: center;
 		color: #fff;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 18px;
+		font-weight: 400;
 	}
 
-	.service-indicator {
-		width: 14px;
-		height: 14px;
-		border-radius: 50%;
-		background: #737373;
-	}
-
-	.service-indicator.online {
-		background: #a3e635;
-	}
-
-	.service-indicator.offline {
-		background: #b91c1c;
+	.server-list {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
 	}
 
 	.server-card {
+		position: relative;
+		height: 384px;
+		padding: 48px;
 		display: flex;
-		width: 288px;
 		flex-direction: column;
-		align-items: stretch;
-		gap: 14px;
+		justify-content: space-between;
+		align-items: flex-start;
+		overflow: hidden;
+		background-color: #171717;
+		background-image:
+			linear-gradient(rgba(9, 9, 9, 0.15), rgba(9, 9, 9, 0.45)),
+			var(--card-bg);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
 	}
 
-	.server-card h2 {
-		min-height: 54px;
+	.server-card__title {
 		margin: 0;
-		padding: 10px;
-		text-align: center;
-		font-size: 1.75rem;
+		max-width: 100%;
+		color: #fff;
+		font-family: var(--title-font, 'Press Start 2P'), Inter, sans-serif;
+		font-size: 36px;
 		font-weight: 400;
 		line-height: 1.15;
 	}
 
-	.server-card img {
-		width: 100%;
-		aspect-ratio: 1;
-		border: 2px solid #a3e635;
-		border-radius: 24px;
-		object-fit: cover;
+	.server-card__title--large {
+		font-size: 60px;
 	}
 
-	.server-card.offline img {
-		border-color: #b91c1c;
-	}
-
-	.detail-row {
+	.server-card__body {
 		display: flex;
-		align-items: center;
+		justify-content: flex-start;
+		align-items: flex-end;
+		gap: 48px;
+	}
+
+	.server-details {
+		width: 320px;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 14px;
+	}
+
+	.server-details--compact {
+		width: 288px;
+		gap: 28px;
+	}
+
+	.server-details__row {
+		align-self: stretch;
+		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		gap: 16px;
-		padding: 0 20px;
-		font-size: 1.875rem;
+	}
+
+	.server-details__label,
+	.server-details__value {
+		margin: 0;
+		color: #fff;
+		font-family: Inter, 'Segoe UI', sans-serif;
+		font-size: 30px;
 		line-height: 1.2;
 	}
 
-	.detail-row strong {
-		font-weight: 700;
+	.server-details__label {
+		font-weight: 400;
 	}
 
-	.server-version {
-		font-size: 16px;
+	.server-details__value {
+		font-weight: 700;
+		text-align: right;
 	}
 
 	.server-status {
-		color: #a3e635;
+		color: #65a30d;
 	}
 
 	.server-card.offline .server-status {
-		color: #b91c1c;
+		color: #dc2626;
 	}
 
-	.server-output {
-		display: none;
-	}
-
-	footer {
+	.server-icons {
 		display: flex;
-		width: 224px;
+		justify-content: flex-start;
+		align-items: flex-start;
+		gap: 14px;
+	}
+
+	.server-icon {
+		width: 64px;
+		height: 64px;
+		object-fit: contain;
+	}
+
+	.server-icon-button {
+		display: inline-flex;
 		align-items: center;
-		gap: 6px;
-		padding: 10px;
-		font-size: 0.75rem;
+		justify-content: center;
+		padding: 0;
+		background: transparent;
+		border: 0;
+		border-radius: 0;
+		text-decoration: none;
+		transition: opacity 0.15s ease;
 	}
 
-	footer img {
-		width: 41px;
-		height: 43px;
-		object-fit: cover;
+	.server-icon-button:hover,
+	.server-icon-button:focus-visible {
+		opacity: 0.8;
+		background: transparent;
+		border-color: transparent;
 	}
 
-	@media (max-width: 1100px) {
-		.page-shell {
-			gap: 88px;
-			padding-right: 24px;
-			padding-left: 24px;
+	.server-card--komga {
+		align-items: flex-end;
+	}
+
+	.komga-body {
+		width: 288px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 28px;
+	}
+
+	.komga-body__row {
+		align-self: stretch;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 28px;
+	}
+
+	.komga-login {
+		color: #fff;
+		font-family: Inter, 'Segoe UI', sans-serif;
+		font-size: 30px;
+		font-weight: 700;
+		line-height: 1.2;
+		text-align: right;
+		text-decoration: none;
+	}
+
+	a.komga-login {
+		border-bottom: 3px solid #b91c1c;
+		padding-bottom: 4px;
+		transition: color 0.15s ease, border-color 0.15s ease;
+	}
+
+	a.komga-login:hover,
+	a.komga-login:focus-visible {
+		color: #b91c1c;
+		border-color: #fff;
+	}
+
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	@media (max-width: 1280px) {
+		.server-card {
+			padding: 40px;
 		}
 
-		.server-grid {
-			gap: 32px;
+		.server-details,
+		.server-details--compact {
+			width: 300px;
 		}
 	}
 
-	@media (max-width: 760px) {
-		.page-shell {
-			gap: 64px;
-			padding: 56px 16px 32px;
+	@media (max-width: 1024px) {
+		.page-header {
+			padding: 40px 20px 72px;
 		}
 
-		.server-grid {
-			flex-direction: column;
-			align-items: center;
-			gap: 56px;
+		.page-header__title {
+			font-size: clamp(2.5rem, 8vw, 3.75rem);
 		}
 
 		.server-card {
-			width: min(100%, 288px);
+			height: auto;
+			min-height: 320px;
+			padding: 32px;
+		}
+
+		.server-card__title {
+			font-size: 28px;
+		}
+
+		.server-card__title--large {
+			font-size: 40px;
+		}
+
+		.server-details,
+		.server-details--compact {
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.page-header {
+			padding: 32px 20px 56px;
+		}
+
+		.server-card {
+			min-height: 0;
+			padding: 28px 20px 36px;
+			gap: 40px;
+		}
+
+		.server-card__body {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 28px;
+		}
+
+		.server-details__label,
+		.server-details__value,
+		.komga-login {
+			font-size: 20px;
+		}
+
+		.komga-body {
+			width: 100%;
 		}
 	}
 </style>
