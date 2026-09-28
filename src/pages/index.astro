@@ -24,6 +24,7 @@ const servers = [
 			{ src: fabricIcon, href: '#', alt: 'Fabric Link' },
 		],
 		compact: false,
+		showPlayers: true,
 	},
 	{
 		key: 'Minecraft Modded',
@@ -35,6 +36,7 @@ const servers = [
 			{ src: fabricIcon, href: '#', alt: 'Fabric Link' },
 		],
 		compact: false,
+		showPlayers: true,
 	},
 	{
 		key: 'Project Zomboid',
@@ -43,6 +45,7 @@ const servers = [
 		background: zomboidBg,
 		icons: [],
 		compact: true,
+		showPlayers: false,
 	},
 ];
 ---
@@ -78,6 +81,12 @@ const servers = [
 										Checking...
 									</dd>
 								</div>
+								{server.showPlayers && (
+									<div class="server-details__row">
+										<dt class="server-details__label">Players:</dt>
+										<dd class="server-details__value" data-players>Checking...</dd>
+									</div>
+								)}
 								<div class="server-details__row">
 									<dt class="server-details__label">Code</dt>
 									<dd class="server-details__value" data-code>-</dd>
@@ -152,6 +161,8 @@ const servers = [
 		statusCode: number;
 		output: string;
 		version: string | null;
+		players?: number;
+		maxPlayers?: number | null;
 	};
 
 	const offlineFallback: Omit<ServerStatus, 'name'> = {
@@ -166,6 +177,7 @@ const servers = [
 			const card = document.querySelector<HTMLElement>(`[data-server-name="${server.name}"]`);
 			const version = card?.querySelector<HTMLElement>('[data-version]');
 			const status = card?.querySelector<HTMLElement>('[data-status]');
+			const players = card?.querySelector<HTMLElement>('[data-players]');
 			const code = card?.querySelector<HTMLElement>('[data-code]');
 			const output = card?.querySelector<HTMLElement>('[data-output]');
 			if (!card || !version || !status || !code || !output) continue;
@@ -174,6 +186,11 @@ const servers = [
 			card.classList.toggle('offline', !server.online);
 			version.textContent = server.version?.trim() || 'Unavailable';
 			status.textContent = server.online ? 'Online' : 'Offline';
+			if (players) {
+				players.textContent = server.online
+					? `${server.players ?? 0}${server.maxPlayers != null ? ` / ${server.maxPlayers}` : ''}`
+					: 'Unavailable';
+			}
 			code.textContent = String(server.statusCode);
 			output.textContent = server.output;
 		}
@@ -281,7 +298,7 @@ const servers = [
 			var(--card-bg);
 		background-repeat: no-repeat;
 		background-position: center;
-		background-size: 100% 100%;
+		background-size: 100% auto;
 	}
 
 	.server-card__title {
