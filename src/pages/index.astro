@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import heroImage from '../assets/Minecraft-TARDIS-Animal-Gathering.png';
-import minecraftVanillaBg from '../assets/Minecraft-Vanilla-BG.png';
+import heroImage from '../assets/Homepage-Hero.png';
+import minecraftVanillaBg from '../assets/Minecraft-TARDIS-Animal-Gathering.png';
 import minecraftModdedBg from '../assets/Minecraft-modded-BG.png';
 import zomboidBg from '../assets/Zomboid-BG.png';
 import komgaBg from '../assets/Komga-bg.png';
@@ -579,12 +579,12 @@ const videos = [
 	}
 
 	.hero-art__image {
-		inset: 4% 5% 10% 7%;
+		inset: 0;
 		background-image: var(--hero-image);
 		background-position: 54% center;
-		background-size: cover;
+		background-repeat: no-repeat;
+		background-size: contain;
 		filter: saturate(.72);
-		transform: scale(1.05);
 		translate: var(--parallax-x, 0) calc(var(--parallax-y, 0px) + var(--pointer-y, 0px));
 		transition: translate .24s ease-out;
 	}
