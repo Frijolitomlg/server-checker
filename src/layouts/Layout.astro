@@ -1,5 +1,10 @@
 ---
 import possumFavicon from '../assets/possum.png';
+
+const {
+	title = 'Legit Gaming — Server Status Checker',
+	description = 'Live status for the Legit Gaming servers: Minecraft Vanilla, Minecraft Modded, Project Zomboid and Komga Readings.',
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -10,17 +15,14 @@ import possumFavicon from '../assets/possum.png';
 		<link rel="icon" type="image/png" href={possumFavicon.src} />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="theme-color" content="#171717" />
-		<meta
-			name="description"
-			content="Live status for the Legit Gaming servers: Minecraft Vanilla, Minecraft Modded, Project Zomboid and Komga Readings."
-		/>
+		<meta name="description" content={description} />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Bungee&family=Coustard&family=Creepster&family=Inter:wght@400;700&family=Press+Start+2P&display=swap"
 		/>
-		<title>Legit Gaming — Server Status Checker</title>
+		<title>{title}</title>
 	</head>
 	<body>
 		<slot />

@@ -1,0 +1,999 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Server Admin — Legit Gaming" description="Manage server addresses, map and modpack links, and player tutorials.">
+	<main class="admin-page">
+		<header class="topbar">
+			<a class="brand" href="/" aria-label="Legit Gaming home">
+				<span class="brand__mark">LG</span>
+				<span>Legit Gaming <small>CONTROL ROOM</small></span>
+			</a>
+			<a class="back-link" href="/">Back to server status <span aria-hidden="true">↗</span></a>
+		</header>
+
+		<section class="login-panel panel" id="login-panel" aria-labelledby="login-title">
+			<div class="eyebrow">ADMIN ACCESS</div>
+			<h1 id="login-title">Welcome back</h1>
+			<p class="intro">Sign in to update server details, modpack links, maps and tutorial steps.</p>
+			<p class="notice" id="configuration-notice" hidden>
+				Admin access needs <code>ADMIN_PASSWORD</code> and a <code>SESSION_SECRET</code> of at least 32 characters on the server.
+			</p>
+			<form class="login-form" id="login-form">
+				<label>
+					Username
+					<input name="username" autocomplete="username" required maxlength="100" />
+				</label>
+				<label>
+					Password
+					<input name="password" type="password" autocomplete="current-password" required maxlength="256" />
+				</label>
+				<button class="button button--primary" type="submit">Sign in <span aria-hidden="true">→</span></button>
+				<p class="form-message" id="login-message" role="status" aria-live="polite"></p>
+			</form>
+		</section>
+
+		<section class="dashboard" id="dashboard" hidden>
+			<div class="page-heading">
+				<div>
+					<div class="eyebrow">SERVER MANAGEMENT</div>
+					<h1>Control room</h1>
+					<p class="intro">Manage the details players see on every server guide.</p>
+				</div>
+				<div class="account">
+					<span class="account__avatar" aria-hidden="true">✦</span>
+					<span id="signed-in-user"></span>
+					<button class="button button--quiet" id="logout-button" type="button">Sign out</button>
+				</div>
+			</div>
+
+			<p class="notice" id="storage-notice" role="status" hidden></p>
+			<div class="workspace">
+				<aside class="server-nav panel">
+					<div class="panel-label">YOUR SERVERS</div>
+					<div id="server-list" class="server-list"></div>
+					<a class="preview-link" id="preview-link" href="/" target="_blank" rel="noreferrer">Preview public guide <span aria-hidden="true">↗</span></a>
+				</aside>
+
+				<section class="editor panel" aria-labelledby="editor-title">
+					<form id="server-form">
+						<div class="editor-heading">
+							<div>
+								<div class="eyebrow">SERVER DETAILS</div>
+								<h2 id="editor-title">Choose a server</h2>
+							</div>
+							<span class="saved-state" id="saved-state" aria-live="polite"></span>
+						</div>
+						<div class="form-grid">
+							<label>
+								Display name
+								<input name="name" required maxlength="100" />
+							</label>
+							<label>
+								Game
+								<input name="game" required maxlength="100" />
+							</label>
+							<label class="form-grid__wide">
+								Server address
+								<input name="serverAddress" placeholder="play.example.net:25565" required maxlength="255" />
+								<small>Shown to players so they can copy it into their game.</small>
+							</label>
+							<label>
+								Modpack link
+								<input name="modpackUrl" type="url" placeholder="https://..." maxlength="2048" />
+							</label>
+							<label>
+								Map link
+								<input name="mapUrl" type="url" placeholder="https://..." maxlength="2048" />
+							</label>
+						</div>
+
+						<div class="steps-heading">
+							<div>
+								<div class="eyebrow">PLAYER ONBOARDING</div>
+								<h3>Tutorial steps</h3>
+							</div>
+							<button class="button button--quiet" id="add-step" type="button">＋ Add step</button>
+						</div>
+						<div class="step-list" id="step-list"></div>
+						<div class="form-footer">
+							<p class="form-message" id="save-message" role="status" aria-live="polite"></p>
+							<button class="button button--primary" type="submit">Save changes <span aria-hidden="true">→</span></button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	type TutorialStep = { title: string; content: string; screenshotUrl: string };
+	type ServerConfig = {
+		slug: string;
+		name: string;
+		game: string;
+		serverAddress: string;
+		mapUrl: string;
+		modpackUrl: string;
+		steps: TutorialStep[];
+	};
+
+	const loginPanel = document.querySelector<HTMLElement>('#login-panel')!;
+	const dashboard = document.querySelector<HTMLElement>('#dashboard')!;
+	const loginForm = document.querySelector<HTMLFormElement>('#login-form')!;
+	const loginMessage = document.querySelector<HTMLElement>('#login-message')!;
+	const configurationNotice = document.querySelector<HTMLElement>('#configuration-notice')!;
+	const serverForm = document.querySelector<HTMLFormElement>('#server-form')!;
+	const serverList = document.querySelector<HTMLElement>('#server-list')!;
+	const stepList = document.querySelector<HTMLElement>('#step-list')!;
+	const saveMessage = document.querySelector<HTMLElement>('#save-message')!;
+	const savedState = document.querySelector<HTMLElement>('#saved-state')!;
+	const storageNotice = document.querySelector<HTMLElement>('#storage-notice')!;
+	let servers: ServerConfig[] = [];
+	let selectedSlug = '';
+
+	async function readJson(response: Response) {
+		const result = await response.json();
+		if (!response.ok) throw new Error(result.error || `Request failed (${response.status}).`);
+		return result;
+	}
+
+	function addStepFields(step: TutorialStep = { title: '', content: '', screenshotUrl: '' }) {
+		const card = document.createElement('article');
+		card.className = 'step-card';
+		const heading = document.createElement('div');
+		heading.className = 'step-card__heading';
+		const title = document.createElement('strong');
+		title.textContent = `Step ${stepList.children.length + 1}`;
+		const remove = document.createElement('button');
+		remove.className = 'remove-step';
+		remove.type = 'button';
+		remove.textContent = 'Remove';
+		remove.setAttribute('aria-label', `Remove step ${stepList.children.length + 1}`);
+		remove.addEventListener('click', () => {
+			if (stepList.children.length < 2) {
+				saveMessage.textContent = 'Keep at least one tutorial step.';
+				return;
+			}
+			card.remove();
+			refreshStepLabels();
+		});
+		heading.append(title, remove);
+
+		const titleLabel = document.createElement('label');
+		titleLabel.textContent = 'Step title';
+		const titleInput = document.createElement('input');
+		titleInput.dataset.stepTitle = '';
+		titleInput.required = true;
+		titleInput.maxLength = 120;
+		titleInput.value = step.title;
+		titleLabel.append(titleInput);
+
+		const contentLabel = document.createElement('label');
+		contentLabel.textContent = 'Instructions';
+		const contentInput = document.createElement('textarea');
+		contentInput.dataset.stepContent = '';
+		contentInput.required = true;
+		contentInput.maxLength = 2000;
+		contentInput.rows = 3;
+		contentInput.value = step.content;
+		const toolbar = document.createElement('div');
+		toolbar.className = 'format-toolbar';
+		toolbar.setAttribute('role', 'toolbar');
+		toolbar.setAttribute('aria-label', `Formatting tools for step ${stepList.children.length + 1}`);
+		const tools = [
+			{ label: 'Bold', token: '**', text: 'B', className: 'format-tool--bold' },
+			{ label: 'Italic', token: '*', text: 'I', className: 'format-tool--italic' },
+			{ label: 'Inline code', token: '`', text: '</>', className: '' },
+			{ label: 'Heading', token: '## ', text: 'H', className: '' },
+			{ label: 'Bullet list', token: '- ', text: '• List', className: '' },
+		];
+		for (const tool of tools) {
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.className = `format-tool ${tool.className}`.trim();
+			button.textContent = tool.text;
+			button.setAttribute('aria-label', tool.label);
+			button.title = tool.label;
+			button.addEventListener('click', () => {
+				const start = contentInput.selectionStart;
+				const end = contentInput.selectionEnd;
+				const selected = contentInput.value.slice(start, end);
+				const replacement = tool.token.endsWith(' ')
+					? `${tool.token}${selected || 'List item'}`
+					: `${tool.token}${selected || 'text'}${tool.token}`;
+				contentInput.setRangeText(replacement, start, end, 'select');
+				contentInput.focus();
+				contentInput.dispatchEvent(new Event('input', { bubbles: true }));
+			});
+			toolbar.append(button);
+		}
+		const linkButton = document.createElement('button');
+		linkButton.type = 'button';
+		linkButton.className = 'format-tool';
+		linkButton.textContent = '↗ Link';
+		linkButton.setAttribute('aria-label', 'Insert link');
+		linkButton.title = 'Insert link';
+		linkButton.addEventListener('click', () => {
+			const start = contentInput.selectionStart;
+			const end = contentInput.selectionEnd;
+			const selected = contentInput.value.slice(start, end) || 'link text';
+			contentInput.setRangeText(`[${selected}](https://)`, start, end, 'select');
+			contentInput.focus();
+			contentInput.dispatchEvent(new Event('input', { bubbles: true }));
+		});
+		toolbar.append(linkButton);
+		const formatHint = document.createElement('small');
+		formatHint.className = 'step-format-hint';
+		formatHint.textContent = 'Markdown: **bold**, *italic*, `code`, ## headings, - lists, [links](https://...)';
+		contentLabel.append(toolbar, formatHint, contentInput);
+
+		const imageLabel = document.createElement('label');
+		imageLabel.textContent = 'Screenshot URL (optional)';
+		const imageInput = document.createElement('input');
+		imageInput.dataset.stepScreenshot = '';
+		imageInput.type = 'url';
+		imageInput.maxLength = 2048;
+		imageInput.placeholder = 'https://...';
+		imageInput.value = step.screenshotUrl;
+		imageLabel.append(imageInput);
+		card.append(heading, titleLabel, contentLabel, imageLabel);
+		stepList.append(card);
+	}
+
+	function refreshStepLabels() {
+		for (const [index, card] of Array.from(stepList.children).entries()) {
+			const title = card.querySelector('strong');
+			const remove = card.querySelector('button');
+			if (title) title.textContent = `Step ${index + 1}`;
+			remove?.setAttribute('aria-label', `Remove step ${index + 1}`);
+		}
+	}
+
+	function renderServerList() {
+		serverList.replaceChildren();
+		for (const server of servers) {
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.className = `server-choice${server.slug === selectedSlug ? ' is-selected' : ''}`;
+			button.setAttribute('aria-current', server.slug === selectedSlug ? 'page' : 'false');
+			const name = document.createElement('span');
+			name.textContent = server.name;
+			const arrow = document.createElement('span');
+			arrow.className = 'server-choice__arrow';
+			arrow.textContent = '↗';
+			button.append(name, arrow);
+			button.addEventListener('click', () => {
+				selectedSlug = server.slug;
+				renderServerList();
+				renderEditor();
+			});
+			serverList.append(button);
+		}
+	}
+
+	function renderEditor() {
+		const server = servers.find((item) => item.slug === selectedSlug);
+		if (!server) return;
+		const editor = document.querySelector<HTMLElement>('.editor')!;
+		editor.classList.remove('is-switching');
+		void editor.offsetWidth;
+		editor.classList.add('is-switching');
+		window.setTimeout(() => editor.classList.remove('is-switching'), 460);
+		document.querySelector<HTMLElement>('#editor-title')!.textContent = server.name;
+		document.querySelector<HTMLInputElement>('[name="name"]')!.value = server.name;
+		document.querySelector<HTMLInputElement>('[name="game"]')!.value = server.game;
+		document.querySelector<HTMLInputElement>('[name="serverAddress"]')!.value = server.serverAddress;
+		document.querySelector<HTMLInputElement>('[name="modpackUrl"]')!.value = server.modpackUrl;
+		document.querySelector<HTMLInputElement>('[name="mapUrl"]')!.value = server.mapUrl;
+		document.querySelector<HTMLAnchorElement>('#preview-link')!.href = `/servers/${server.slug}`;
+		stepList.replaceChildren();
+		for (const step of server.steps) addStepFields(step);
+		saveMessage.textContent = '';
+		savedState.textContent = '';
+	}
+
+	async function loadServers() {
+		const result = await readJson(await fetch('/api/admin/servers'));
+		servers = result.servers;
+		selectedSlug = servers[0]?.slug ?? '';
+		storageNotice.hidden = Boolean(result.storageConfigured);
+		storageNotice.textContent = result.storageConfigured
+			? ''
+			: 'KV storage is not configured. The starter content is visible, but edits cannot be saved until KV_REST_API_URL and KV_REST_API_TOKEN are set.';
+		renderServerList();
+		renderEditor();
+	}
+
+	loginForm.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		loginMessage.textContent = '';
+		const formData = new FormData(loginForm);
+		const submit = loginForm.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+		submit.disabled = true;
+		try {
+			const result = await readJson(await fetch('/api/admin/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					username: formData.get('username'),
+					password: formData.get('password'),
+				}),
+			}));
+			loginForm.reset();
+			loginPanel.hidden = true;
+			dashboard.hidden = false;
+			document.querySelector<HTMLElement>('#signed-in-user')!.textContent = result.username;
+			await loadServers();
+		} catch (error) {
+			loginMessage.textContent = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+		} finally {
+			submit.disabled = false;
+		}
+	});
+
+	serverForm.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		saveMessage.textContent = '';
+		savedState.textContent = 'Saving…';
+		const data = new FormData(serverForm);
+		const updated = servers.map((server): ServerConfig => server.slug !== selectedSlug ? server : ({
+			...server,
+			name: String(data.get('name') ?? ''),
+			game: String(data.get('game') ?? ''),
+			serverAddress: String(data.get('serverAddress') ?? ''),
+			modpackUrl: String(data.get('modpackUrl') ?? ''),
+			mapUrl: String(data.get('mapUrl') ?? ''),
+			steps: Array.from(stepList.querySelectorAll<HTMLElement>('.step-card')).map((card) => ({
+				title: card.querySelector<HTMLInputElement>('[data-step-title]')!.value,
+				content: card.querySelector<HTMLTextAreaElement>('[data-step-content]')!.value,
+				screenshotUrl: card.querySelector<HTMLInputElement>('[data-step-screenshot]')!.value,
+			})),
+		}));
+		const submit = serverForm.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+		submit.disabled = true;
+		try {
+			const result = await readJson(await fetch('/api/admin/servers', {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(updated),
+			}));
+			servers = result.servers;
+			renderServerList();
+			renderEditor();
+			savedState.textContent = 'Saved';
+		} catch (error) {
+			savedState.textContent = '';
+			saveMessage.textContent = error instanceof Error ? error.message : 'Changes could not be saved.';
+		} finally {
+			submit.disabled = false;
+		}
+	});
+
+	document.querySelector<HTMLButtonElement>('#add-step')!.addEventListener('click', () => {
+		if (stepList.children.length >= 20) {
+			saveMessage.textContent = 'A tutorial can have up to 20 steps.';
+			return;
+		}
+		addStepFields();
+		saveMessage.textContent = '';
+	});
+
+	document.querySelector<HTMLButtonElement>('#logout-button')!.addEventListener('click', async () => {
+		await fetch('/api/admin/logout', { method: 'POST' });
+		dashboard.hidden = true;
+		loginPanel.hidden = false;
+	});
+
+	void (async () => {
+		try {
+			const session = await readJson(await fetch('/api/admin/session'));
+			configurationNotice.hidden = session.configured;
+			if (!session.authenticated) return;
+			loginPanel.hidden = true;
+			dashboard.hidden = false;
+			document.querySelector<HTMLElement>('#signed-in-user')!.textContent = session.username;
+			await loadServers();
+		} catch (error) {
+			loginMessage.textContent = error instanceof Error ? error.message : 'The admin portal could not be reached.';
+		}
+	})();
+</script>
+
+<style>
+	:global(body) {
+		background: #171717;
+	}
+
+	.admin-page {
+		--panel: #1f1f1f;
+		--panel-raised: #272727;
+		--muted: #b0b0b0;
+		--line: #383838;
+		--accent: #b91c1c;
+		min-height: 100vh;
+		padding: 0 5vw 64px;
+		background: #171717;
+		color: #fff;
+	}
+
+	.topbar,
+	.brand,
+	.back-link,
+	.account,
+	.editor-heading,
+	.steps-heading,
+	.form-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.topbar {
+		max-width: 1440px;
+		height: 82px;
+		margin: 0 auto;
+		border-bottom: 1px solid #333;
+	}
+
+	.brand {
+		justify-content: flex-start;
+		gap: 12px;
+		color: #fff;
+		font-size: 15px;
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	.brand__mark,
+	.account__avatar {
+		display: grid;
+		place-items: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 8px;
+		background: var(--accent);
+		color: #fff;
+		font-size: 13px;
+		font-weight: 800;
+	}
+
+	.brand small {
+		display: block;
+		margin-top: 3px;
+		color: var(--muted);
+		font-size: 9px;
+		letter-spacing: .14em;
+	}
+
+	.back-link,
+	.preview-link {
+		gap: 10px;
+		color: #ddd;
+		font-size: 13px;
+		text-decoration: none;
+	}
+
+	.back-link:hover,
+	.preview-link:hover {
+		color: var(--accent);
+	}
+
+	.panel {
+		border: 1px solid var(--line);
+		border-radius: 8px;
+		background: var(--panel);
+		box-shadow: 0 12px 30px rgba(0,0,0,.2);
+	}
+
+	.login-panel {
+		width: min(100%, 440px);
+		margin: 72px auto;
+		padding: 38px;
+	}
+
+	.eyebrow,
+	.panel-label {
+		color: var(--accent);
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: .16em;
+	}
+
+	h1,
+	h2,
+	h3,
+	p {
+		margin-top: 0;
+	}
+
+	h1 {
+		margin: 12px 0 8px;
+		font-size: clamp(30px, 4vw, 40px);
+		letter-spacing: 0;
+	}
+
+	.login-panel h1,
+	.page-heading h1 {
+		color: var(--accent);
+		font-family: Bungee, Inter, sans-serif;
+		font-size: clamp(25px, 3.5vw, 36px);
+		font-weight: 400;
+	}
+
+	h2 {
+		margin: 8px 0 0;
+		font-size: 23px;
+		letter-spacing: -.03em;
+	}
+
+	h3 {
+		margin: 8px 0 0;
+		font-size: 18px;
+	}
+
+	.intro {
+		margin-bottom: 28px;
+		color: var(--muted);
+		font-size: 14px;
+		line-height: 1.65;
+	}
+
+	label {
+		display: flex;
+		flex-direction: column;
+		gap: 9px;
+		color: #ddd;
+		font-size: 12px;
+		font-weight: 600;
+	}
+
+	input,
+	textarea {
+		width: 100%;
+		min-width: 0;
+		border: 1px solid #444;
+		border-radius: 6px;
+		padding: 12px 13px;
+		background: #171717;
+		color: #fff;
+		font: inherit;
+		font-size: 13px;
+		outline: none;
+	}
+
+	input:focus,
+	textarea:focus {
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px rgba(185,28,28,.16);
+	}
+
+	input::placeholder {
+		color: #888;
+	}
+
+	.login-form,
+	.login-form label {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.login-form {
+		gap: 18px;
+	}
+
+	.button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 14px;
+		border: 1px solid transparent;
+		border-radius: 6px;
+		padding: 11px 15px;
+		font: inherit;
+		font-size: 12px;
+		font-weight: 700;
+		cursor: pointer;
+		transition: transform .15s ease, background .15s ease;
+	}
+
+	.button:hover:not(:disabled) {
+		transform: translateY(-1px);
+	}
+
+	.button:disabled {
+		cursor: wait;
+		opacity: .6;
+	}
+
+	.button--primary {
+		background: var(--accent);
+		color: #fff;
+	}
+
+	.button--primary:hover:not(:disabled) {
+		background: #991b1b;
+	}
+
+	.button--quiet {
+		border-color: var(--line);
+		background: #292929;
+		color: #eee;
+	}
+
+	.button--quiet:hover:not(:disabled) {
+		background: #333;
+	}
+
+	.footnote,
+	.form-message,
+	.saved-state {
+		color: var(--muted);
+		font-size: 12px;
+		line-height: 1.5;
+	}
+
+	.footnote {
+		margin: 22px 0 0;
+	}
+
+	.form-message {
+		margin: 0;
+		color: #ffb1b1;
+	}
+
+	.notice {
+		border: 1px solid rgba(185, 28, 28, .5);
+		border-radius: 6px;
+		padding: 12px 14px;
+		background: rgba(185, 28, 28, .12);
+		color: #f5caca;
+		font-size: 12px;
+		line-height: 1.55;
+	}
+
+	.notice code {
+		color: #ffe4e4;
+	}
+
+	.dashboard {
+		max-width: 1440px;
+		margin: 42px auto 0;
+	}
+
+	.page-heading {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 24px;
+		margin-bottom: 30px;
+	}
+
+	.page-heading .intro {
+		margin: 0;
+	}
+
+	.account {
+		justify-content: flex-start;
+		gap: 10px;
+		color: #ddd;
+		font-size: 12px;
+	}
+
+	.account__avatar {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+	}
+
+	.workspace {
+		display: grid;
+		grid-template-columns: minmax(220px, 285px) minmax(0, 1fr);
+		align-items: start;
+		gap: 20px;
+	}
+
+	.server-nav {
+		position: sticky;
+		top: 20px;
+		padding: 20px 14px;
+	}
+
+	.panel-label {
+		padding: 0 9px 14px;
+		color: var(--muted);
+	}
+
+	.server-list {
+		display: grid;
+		gap: 6px;
+	}
+
+	:global(.server-choice) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		width: 100%;
+		border: 1px solid transparent;
+		border-radius: 10px;
+		padding: 12px 10px;
+		background: transparent;
+		color: #c6c5d0;
+		font: inherit;
+		font-size: 12px;
+		text-align: left;
+		cursor: pointer;
+		transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease;
+	}
+
+	:global(.server-choice:hover),
+	:global(.server-choice.is-selected) {
+		border-color: #514040;
+		background: #2a2525;
+		color: white;
+	}
+
+	:global(.server-choice.is-selected) {
+		box-shadow: inset 3px 0 var(--accent);
+	}
+
+	:global(.server-choice__arrow) {
+		color: var(--accent);
+	}
+
+	.preview-link {
+		display: flex;
+		margin: 22px 9px 3px;
+		padding-top: 17px;
+		border-top: 1px solid var(--line);
+		font-size: 12px;
+	}
+
+	.editor {
+		padding: clamp(20px, 3vw, 34px);
+	}
+
+	.editor-heading {
+		margin-bottom: 27px;
+	}
+
+	.saved-state {
+		color: #93e8bd;
+	}
+
+	.form-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 18px;
+	}
+
+	.form-grid__wide {
+		grid-column: 1 / -1;
+	}
+
+	.form-grid small {
+		color: var(--muted);
+		font-size: 11px;
+		font-weight: 400;
+	}
+
+	.steps-heading {
+		margin: 34px 0 16px;
+	}
+
+	.step-list {
+		display: grid;
+		gap: 12px;
+	}
+
+	:global(.step-card) {
+		display: grid;
+		gap: 14px;
+		border: 1px solid var(--line);
+		border-radius: 12px;
+		padding: 16px;
+		background: #242424;
+	}
+
+	:global(.step-card__heading) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 2px;
+		color: #eee;
+		font-size: 12px;
+	}
+
+	:global(.step-card label) {
+		display: flex;
+		flex-direction: column;
+		gap: 9px;
+		color: #ddd;
+		font-size: 12px;
+		font-weight: 600;
+	}
+
+	:global(.step-card input),
+	:global(.step-card textarea) {
+		width: 100%;
+		min-width: 0;
+		border: 1px solid #444;
+		border-radius: 6px;
+		padding: 12px 13px;
+		background: #171717;
+		color: #fff;
+		font: inherit;
+		font-size: 13px;
+		outline: none;
+	}
+
+	:global(.step-card input:focus),
+	:global(.step-card textarea:focus) {
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px rgba(185,28,28,.16);
+	}
+
+	:global(.step-card textarea) {
+		min-height: 112px;
+		resize: vertical;
+		line-height: 1.65;
+	}
+
+	:global(.step-format-hint) {
+		margin: -3px 0 0;
+		color: #999;
+		font-size: 10px;
+		font-weight: 400;
+		line-height: 1.6;
+	}
+
+	:global(.format-toolbar) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0 0 1px;
+	}
+
+	:global(.format-tool) {
+		min-width: 34px;
+		min-height: 32px;
+		border: 1px solid #454545;
+		border-radius: 5px;
+		padding: 5px 9px;
+		background: #292929;
+		color: #eee;
+		font: inherit;
+		font-size: 11px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background .16s ease, border-color .16s ease, color .16s ease;
+	}
+
+	:global(.format-tool:hover),
+	:global(.format-tool:focus-visible) {
+		border-color: var(--accent);
+		background: #382323;
+		color: #fff;
+	}
+
+	:global(.format-tool--bold) {
+		font-weight: 800;
+	}
+
+	:global(.format-tool--italic) {
+		font-style: italic;
+	}
+
+	:global(.remove-step) {
+		border: 0;
+		background: none;
+		color: #c9a0a9;
+		font: inherit;
+		font-size: 11px;
+		cursor: pointer;
+	}
+
+	:global(.remove-step:hover) {
+		color: #ffb1b1;
+	}
+
+	.editor.is-switching {
+		animation: editor-enter .42s cubic-bezier(.2,.8,.2,1) both;
+	}
+
+	@keyframes editor-enter {
+		from {
+			opacity: .45;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.editor.is-switching {
+			animation: none;
+		}
+	}
+
+	textarea {
+		resize: vertical;
+		line-height: 1.55;
+	}
+
+	.form-footer {
+		align-items: flex-end;
+		gap: 16px;
+		margin-top: 24px;
+		padding-top: 20px;
+		border-top: 1px solid var(--line);
+	}
+
+	.form-footer .form-message:empty {
+		display: none;
+	}
+
+	[hidden] {
+		display: none !important;
+	}
+
+	@media (max-width: 800px) {
+		.admin-page {
+			padding: 0 18px 40px;
+		}
+
+		.workspace {
+			grid-template-columns: 1fr;
+		}
+
+		.server-nav {
+			position: static;
+		}
+
+		.server-list {
+			grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		}
+
+		.page-heading {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+	}
+
+	@media (max-width: 520px) {
+		.topbar {
+			height: 72px;
+		}
+
+		.back-link {
+			font-size: 11px;
+		}
+
+		.login-panel {
+			margin-top: 40px;
+			padding: 25px 20px;
+		}
+
+		.account {
+			flex-wrap: wrap;
+		}
+
+		.form-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.form-grid__wide {
+			grid-column: auto;
+		}
+
+		.form-footer {
+			align-items: stretch;
+			flex-direction: column;
+		}
+	}
+</style>
