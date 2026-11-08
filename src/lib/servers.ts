@@ -62,8 +62,8 @@ const storageKey = 'legit-gaming:servers';
 export class ServerStorageError extends Error {}
 
 function getKvCredentials() {
-	const url = import.meta.env.KV_REST_API_URL;
-	const token = import.meta.env.KV_REST_API_TOKEN;
+	const url = import.meta.env.BORK_KV_REST_API_URL;
+	const token = import.meta.env.BORK_KV_REST_API_TOKEN;
 	return url && token ? { url: url.replace(/\/+$/, ''), token } : null;
 }
 

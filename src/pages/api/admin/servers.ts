@@ -42,7 +42,7 @@ export const PUT: APIRoute = async ({ request }) => {
 	} catch (error) {
 		if (error instanceof ServerStorageError && /Server storage is not configured/.test(error.message)) {
 			return jsonResponse({
-				error: 'Server storage is not configured. Add KV_REST_API_URL and KV_REST_API_TOKEN to the deployment environment.',
+				error: 'Server storage is not configured. Add BORK_KV_REST_API_URL and BORK_KV_REST_API_TOKEN to the deployment environment.',
 			}, 503);
 		}
 		console.error('Unable to save server settings:', error);

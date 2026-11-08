@@ -6,7 +6,7 @@ import Layout from '../layouts/Layout.astro';
 	<main class="admin-page">
 		<header class="topbar">
 			<a class="brand" href="/" aria-label="Legit Gaming home">
-				<span class="brand__mark">LG</span>
+				<img class="brand__mark" src="/legit-gaming-logo.png" alt="" />
 				<span>Legit Gaming <small>CONTROL ROOM</small></span>
 			</a>
 			<a class="back-link" href="/">Back to server status <span aria-hidden="true">↗</span></a>
@@ -301,7 +301,7 @@ import Layout from '../layouts/Layout.astro';
 		storageNotice.hidden = Boolean(result.storageConfigured);
 		storageNotice.textContent = result.storageConfigured
 			? ''
-			: 'KV storage is not configured. The starter content is visible, but edits cannot be saved until KV_REST_API_URL and KV_REST_API_TOKEN are set.';
+			: 'KV storage is not configured. The starter content is visible, but edits cannot be saved until BORK_KV_REST_API_URL and BORK_KV_REST_API_TOKEN are set.';
 		renderServerList();
 		renderEditor();
 	}
@@ -457,6 +457,12 @@ import Layout from '../layouts/Layout.astro';
 		color: #fff;
 		font-size: 13px;
 		font-weight: 800;
+	}
+
+	.brand__mark {
+		display: block;
+		flex: none;
+		object-fit: cover;
 	}
 
 	.brand small {

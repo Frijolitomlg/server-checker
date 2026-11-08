@@ -36,7 +36,7 @@ const videos = [
 	<main class="site-shell">
 		<header class="topbar">
 			<a href="/" class="brand" aria-label="Legit Gaming home">
-				<span class="brand__mark" aria-hidden="true">LG</span>
+				<img class="brand__mark" src="/legit-gaming-logo.png" alt="" />
 				<span class="brand__name">LEGIT<span>GAMING</span></span>
 			</a>
 			<nav class="topnav" aria-label="Main navigation">
@@ -194,7 +194,7 @@ const videos = [
 
 		<footer class="footer">
 			<a href="/" class="brand" aria-label="Legit Gaming home">
-				<span class="brand__mark" aria-hidden="true">LG</span>
+				<img class="brand__mark" src="/legit-gaming-logo.png" alt="" />
 				<span class="brand__name">LEGIT<span>GAMING</span></span>
 			</a>
 			<p>Made for the ones who always say “one more round.”</p>
@@ -379,13 +379,11 @@ const videos = [
 	}
 
 	.brand__mark {
-		display: grid;
-		place-items: center;
+		display: block;
+		flex: none;
 		width: 37px;
 		height: 37px;
-		background: var(--red);
-		font-family: Bungee, sans-serif;
-		font-size: 13px;
+		object-fit: cover;
 	}
 
 	.brand__name {

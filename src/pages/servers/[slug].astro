@@ -16,7 +16,7 @@ if (!server) Astro.response.status = 404;
 >
 	<main class="guide-page">
 		<header class="guide-topbar">
-			<a href="/" class="brand"><span class="brand__mark">LG</span>Legit Gaming</a>
+			<a href="/" class="brand"><img class="brand__mark" src="/legit-gaming-logo.png" alt="" />Legit Gaming</a>
 			<a href="/" class="back-link"><span aria-hidden="true">←</span> All servers</a>
 		</header>
 
@@ -211,14 +211,11 @@ if (!server) Astro.response.status = 404;
 	}
 
 	.brand__mark {
-		display: grid;
-		place-items: center;
+		display: block;
+		flex: none;
 		width: 37px;
 		height: 37px;
-		border-radius: 0;
-		background: var(--accent);
-		color: #fff;
-		font-size: 12px;
+		object-fit: cover;
 	}
 
 	.back-link,
