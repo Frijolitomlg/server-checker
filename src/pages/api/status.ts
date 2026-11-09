@@ -1,8 +1,9 @@
 import { GameDig } from 'gamedig';
 import type { APIRoute } from 'astro';
 
-const timeoutMs = 3500;
-const pzRelayUrl = import.meta.env.PZ_RELAY_URL || 'http://127.0.0.1:3001/status';
+const minecraftTimeoutMs = 3500;
+const pzRelayTimeoutMs = 6500;
+const pzRelayUrl = import.meta.env.PZ_RELAY_URL?.trim();
 
 const minecraftServers = [
 	{ name: 'Minecraft Vanilla', host: 'retarded-minecraft.playit.plus', port: 25565, protocol: 'Minecraft Java status' },
@@ -27,7 +28,7 @@ async function checkMinecraft(server: (typeof minecraftServers)[number]): Promis
 			type: 'minecraft',
 			host: server.host,
 			port: server.port,
-			socketTimeout: timeoutMs,
+			socketTimeout: minecraftTimeoutMs,
 			maxAttempts: 1,
 		});
 		return {
@@ -51,8 +52,17 @@ async function checkMinecraft(server: (typeof minecraftServers)[number]): Promis
 }
 
 async function checkProjectZomboid(): Promise<ProbeResult> {
+	if (!pzRelayUrl) {
+		return {
+			online: false,
+			statusCode: 503,
+			output: 'PZ_RELAY_URL is not configured. Deploy the Project Zomboid relay and set its HTTPS /status URL in Vercel.',
+			version: null,
+		};
+	}
+
 	try {
-		const response = await fetch(pzRelayUrl, { signal: AbortSignal.timeout(timeoutMs) });
+		const response = await fetch(pzRelayUrl, { signal: AbortSignal.timeout(pzRelayTimeoutMs) });
 		if (!response.ok) {
 			return {
 				online: false,
