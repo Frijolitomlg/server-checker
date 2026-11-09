@@ -1,16 +1,20 @@
 import { GameDig } from 'gamedig';
 import type { APIRoute } from 'astro';
+import { probeProjectZomboid } from '../../lib/pzProbe';
 
 const minecraftTimeoutMs = 3500;
 const pzRelayTimeoutMs = 6500;
 const pzRelayUrl = import.meta.env.PZ_RELAY_URL?.trim();
+const pzHost = import.meta.env.PZ_HOST?.trim() || '209.25.140.16';
+const pzGamePort = Number(import.meta.env.PZ_GAME_PORT || 17809);
+const pzQueryPort = Number(import.meta.env.PZ_QUERY_PORT || pzGamePort);
 
 const minecraftServers = [
 	{ name: 'Minecraft Vanilla', host: 'retarded-minecraft.playit.plus', port: 25565, protocol: 'Minecraft Java status' },
 	{ name: 'Minecraft Modded', host: 'retarded-modded-minecraft.playit.plus', port: 25565, protocol: 'Minecraft Java status' },
 ];
 
-const zomboidServer = { name: 'Project Zomboid', host: '209.25.140.16', port: 17809, protocol: 'Project Zomboid UDP query' };
+const zomboidServer = { name: 'Project Zomboid', host: pzHost, port: pzGamePort, protocol: 'Project Zomboid RakNet ping / Steam query' };
 
 type ProbeResult = {
 	online: boolean;
@@ -51,45 +55,41 @@ async function checkMinecraft(server: (typeof minecraftServers)[number]): Promis
 	}
 }
 
-async function checkProjectZomboid(): Promise<ProbeResult> {
-	if (!pzRelayUrl) {
-		return {
-			online: false,
-			statusCode: 503,
-			output: 'PZ_RELAY_URL is not configured. Deploy the Project Zomboid relay and set its HTTPS /status URL in Vercel.',
-			version: null,
-		};
-	}
+async function checkProjectZomboidDirect(): Promise<ProbeResult> {
+	return probeProjectZomboid({ host: pzHost, gamePort: pzGamePort, queryPort: pzQueryPort, timeoutMs: minecraftTimeoutMs });
+}
 
+async function checkProjectZomboidViaRelay(relayUrl: string): Promise<ProbeResult | null> {
 	try {
-		const response = await fetch(pzRelayUrl, { signal: AbortSignal.timeout(pzRelayTimeoutMs) });
-		if (!response.ok) {
-			return {
-				online: false,
-				statusCode: response.status,
-				output: `Relay returned HTTP ${response.status}`,
-				version: null,
-			};
-		}
+		const response = await fetch(relayUrl, { signal: AbortSignal.timeout(pzRelayTimeoutMs) });
+		if (!response.ok) return null;
 		const result = await response.json() as ProbeResult;
 		const online = Boolean(result.online);
 		return {
 			online,
 			statusCode: result.statusCode ?? (online ? 200 : 503),
-			output: result.output || 'Relay returned no output',
+			output: `Relay: ${result.output || 'no output'}`,
 			version: result.version ?? null,
 			players: result.players,
 			maxPlayers: result.maxPlayers,
 			map: result.map,
 		};
-	} catch (error) {
-		return {
-			online: false,
-			statusCode: 502,
-			output: `Project Zomboid relay unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`,
-			version: null,
-		};
+	} catch {
+		return null;
 	}
+}
+
+async function checkProjectZomboid(): Promise<ProbeResult> {
+	// Prefer the relay when one is configured, but never depend on it:
+	// if it is unreachable, query the game server directly from this function.
+	if (pzRelayUrl) {
+		const relayed = await checkProjectZomboidViaRelay(pzRelayUrl);
+		if (relayed?.online) return relayed;
+		const direct = await checkProjectZomboidDirect();
+		if (direct.online || !relayed) return direct;
+		return relayed;
+	}
+	return checkProjectZomboidDirect();
 }
 
 export const GET: APIRoute = async () => {
