@@ -24,3 +24,13 @@ The Upstash integration's other variables (such as `BORK_REDIS_URL`, `BORK_KV_UR
 The admin area can edit each server's name, game, address, modpack URL, map URL, and ordered tutorial steps. A step can include a publicly reachable HTTP(S) screenshot URL; leave it blank to show a screenshot placeholder.
 
 Tutorial instructions support Markdown headings, bold, italics, inline code, lists, and HTTPS links. The admin editor includes formatting buttons for these options. The homepage, server guides, and control room share a dark red-and-charcoal theme; reduced-motion preferences disable decorative motion.
+
+## Project Zomboid heartbeat (recommended)
+
+The most reliable way to show the Project Zomboid status is to let the PC hosting the server report it:
+
+1. In Vercel, add `PZ_HEARTBEAT_SECRET` (any long random string) and redeploy.
+2. On the host PC, install Node.js 18+, then in `pz-status-relay` run `npm install`.
+3. Start the heartbeat with `PZ_HEARTBEAT_URL` (your site's `/api/pz-heartbeat` URL) and the same `PZ_HEARTBEAT_SECRET`, then run `npm run heartbeat`.
+
+The heartbeat checks the server on `127.0.0.1:16261` every minute (change with `PZ_HOST`, `PZ_GAME_PORT`, `PZ_QUERY_PORT`) and posts the result. If no heartbeat arrives for 3 minutes, the status API falls back to the relay or a direct check.

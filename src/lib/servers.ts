@@ -71,7 +71,7 @@ export function isServerStorageConfigured() {
 	return getKvCredentials() !== null;
 }
 
-async function runKvCommand(command: string[]) {
+export async function runKvCommand(command: string[]) {
 	const credentials = getKvCredentials();
 	if (!credentials) {
 		throw new ServerStorageError('Server storage is not configured.');

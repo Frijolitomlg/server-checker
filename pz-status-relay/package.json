@@ -6,7 +6,8 @@
     "node": ">=18"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "heartbeat": "node heartbeat.js"
   },
   "dependencies": {
     "gamedig": "^5.3.1"

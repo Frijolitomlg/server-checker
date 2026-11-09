@@ -1,6 +1,7 @@
 import { GameDig } from 'gamedig';
 import type { APIRoute } from 'astro';
 import { probeProjectZomboid } from '../../lib/pzProbe';
+import { readHeartbeat } from '../../lib/pzHeartbeat';
 
 const minecraftTimeoutMs = 3500;
 const pzRelayTimeoutMs = 6500;
@@ -80,8 +81,24 @@ async function checkProjectZomboidViaRelay(relayUrl: string): Promise<ProbeResul
 }
 
 async function checkProjectZomboid(): Promise<ProbeResult> {
-	// Prefer the relay when one is configured, but never depend on it:
-	// if it is unreachable, query the game server directly from this function.
+	// 1. A recent heartbeat from the host PC is the most reliable source.
+	//    It expires after a few minutes, so a missing one means the host stopped reporting.
+	const heartbeat = await readHeartbeat();
+	if (heartbeat) {
+		const ageSeconds = Math.round((Date.now() - Date.parse(heartbeat.receivedAt)) / 1000);
+		return {
+			online: heartbeat.online,
+			statusCode: heartbeat.online ? 200 : 503,
+			output: `Heartbeat from host ${ageSeconds}s ago: ${heartbeat.output}`,
+			version: heartbeat.version,
+			players: heartbeat.players,
+			maxPlayers: heartbeat.maxPlayers,
+			map: heartbeat.map,
+		};
+	}
+
+	// 2. Otherwise use the relay when one is configured, but never depend on it:
+	//    if it is unreachable, query the game server directly from this function.
 	if (pzRelayUrl) {
 		const relayed = await checkProjectZomboidViaRelay(pzRelayUrl);
 		if (relayed?.online) return relayed;
